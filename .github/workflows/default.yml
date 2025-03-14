@@ -17,7 +17,7 @@ on:
         type: string
       host:
         description: The URL of your SonarQube instance.
-        required: true
+        required: false
         type: string
         default: 'https://sonarcloud.io'
       parameters:
