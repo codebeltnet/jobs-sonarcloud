@@ -1,0 +1,72 @@
+name: SonarQube Cloud
+
+on:
+  workflow_call:
+    inputs:
+      organization:
+        description: The name of your organization in SonarQube Cloud.
+        required: true
+        type: string
+      projectKey:
+        description: The key of your project in SonarQube Cloud.
+        required: true
+        type: string
+      version:
+        description: The version of your project, e.g., 1.0.0.
+        required: true
+        type: string
+      host:
+        description: The URL of your SonarQube instance.
+        required: true
+        type: string
+        default: 'https://sonarcloud.io'
+      parameters:
+        description: Additional properties to be passed to the scanner. Default is to use properties tailored for C# and the coding conventions followed by Codebelt.
+        required: false
+        type: string
+        default: >-
+          -d:sonar.exclusions='**/obj/**,**/bin/**'
+          -d:sonar.sources='src/'
+          -d:sonar.tests='test/'
+    secrets:
+      SONAR_TOKEN:
+        required: true
+
+jobs:
+  sonarcloud:
+    name: 🔬 Code Quality Analysis
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: codebeltnet/git-checkout@v1
+
+      - name: Install .NET
+        uses: codebeltnet/install-dotnet@v1
+        with:
+          includePreview: true
+
+      - name: Install .NET Tool - Sonar Scanner
+        uses: codebeltnet/dotnet-tool-install-sonarscanner@v1
+
+      - name: Restore Dependencies
+        uses: codebeltnet/dotnet-restore@v2
+
+      - name: Run SonarQube Cloud Analysis
+        uses: codebeltnet/sonarcloud-scan@v1
+        with:
+          token: ${{ secrets.SONAR_TOKEN }}
+          organization: ${{ inputs.organization }}
+          projectKey: ${{ inputs.projectKey }}
+          version: ${{ inputs.version }}
+
+      - name: Build
+        uses: codebeltnet/dotnet-build@v2
+        with:
+          buildSwitches: -p:SkipSignAssembly=true
+          uploadBuildArtifact: false
+
+      - name: Finalize SonarCloud Analysis
+        uses: codebeltnet/sonarcloud-scan-finalize@v1
+        with:
+          token: ${{ secrets.SONAR_TOKEN }}
