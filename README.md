@@ -50,6 +50,8 @@ with:
     -d:sonar.exclusions='**/obj/**,**/bin/**'
     -d:sonar.sources='src/'
     -d:sonar.tests='test/'
+  # The maximum time in minutes to allow the job to run. Default is 15 minutes.
+  timeout-minutes: 15
 ```
 
 ### Secrets

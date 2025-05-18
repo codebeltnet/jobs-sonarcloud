@@ -28,6 +28,11 @@ on:
           -d:sonar.exclusions='**/obj/**,**/bin/**'
           -d:sonar.sources='src/'
           -d:sonar.tests='test/'
+      timeout-minutes:
+        description: The maximum time in minutes to allow the job to run. Default is 15 minutes.
+        required: false
+        type: number
+        default: 15
     secrets:
       SONAR_TOKEN:
         required: true
@@ -36,7 +41,7 @@ jobs:
   sonarcloud:
     name: 🔬 Code Quality Analysis
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: ${{ inputs.timeout-minutes }}
     steps:
       - name: Checkout
         uses: codebeltnet/git-checkout@v1
