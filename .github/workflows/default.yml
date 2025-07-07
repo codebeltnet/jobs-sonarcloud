@@ -57,13 +57,13 @@ jobs:
           includePreview: ${{ inputs.include-preview }}
 
       - name: Install .NET Tool - Sonar Scanner
-        uses: codebeltnet/dotnet-tool-install-sonarscanner@v1
+        uses: codebeltnet/dotnet-tool-install-sonarscanner@v2
 
       - name: Restore Dependencies
         uses: codebeltnet/dotnet-restore@v3
 
       - name: Run SonarQube Cloud Analysis
-        uses: codebeltnet/sonarcloud-scan@v1
+        uses: codebeltnet/sonarcloud-scan@v2
         with:
           token: ${{ secrets.SONAR_TOKEN }}
           organization: ${{ inputs.organization }}
