@@ -60,7 +60,7 @@ jobs:
         uses: codebeltnet/dotnet-tool-install-sonarscanner@v1
 
       - name: Restore Dependencies
-        uses: codebeltnet/dotnet-restore@v2
+        uses: codebeltnet/dotnet-restore@v3
 
       - name: Run SonarQube Cloud Analysis
         uses: codebeltnet/sonarcloud-scan@v1
@@ -71,10 +71,9 @@ jobs:
           version: ${{ inputs.version }}
 
       - name: Build
-        uses: codebeltnet/dotnet-build@v2
+        uses: codebeltnet/dotnet-build@v4
         with:
-          buildSwitches: -p:SkipSignAssembly=true
-          uploadBuildArtifact: false
+          build-switches: -p:SkipSignAssembly=true
 
       - name: Finalize SonarCloud Analysis
         uses: codebeltnet/sonarcloud-scan-finalize@v1
