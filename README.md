@@ -45,6 +45,8 @@ with:
   version:
   # The URL of your SonarQube instance.
   host: 'https://sonarcloud.io'
+  # When set to true, includes preview versions of .NET. Default is false.
+  include-preview: false
   # Additional properties to be passed to the scanner.
   parameters: >-
     -d:sonar.exclusions='**/obj/**,**/bin/**'
@@ -71,11 +73,12 @@ This workflow has no outputs.
 jobs:
   sonarcloud:
     needs: [build,test]
-    uses: codebeltnet/jobs-sonarcloud/.github/workflows/default@v1
+    uses: codebeltnet/jobs-sonarcloud/.github/workflows/default@v2
     with:
       organization: your-sonarcloud-organization
       projectKey: your-sonarcloud-projectkey
       version: ${{ needs.build.outputs.version }}
+      include-preview: true
     secrets: inherit
 ```
 

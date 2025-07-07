@@ -20,6 +20,11 @@ on:
         required: false
         type: string
         default: 'https://sonarcloud.io'
+      include-preview:
+        description: When set to true, includes preview versions of .NET. Default is false.
+        required: false
+        type: boolean
+        default: false
       parameters:
         description: Additional properties to be passed to the scanner. Default is to use properties tailored for C# and the coding conventions followed by Codebelt.
         required: false
@@ -47,9 +52,9 @@ jobs:
         uses: codebeltnet/git-checkout@v1
 
       - name: Install .NET
-        uses: codebeltnet/install-dotnet@v1
+        uses: codebeltnet/install-dotnet@v2
         with:
-          includePreview: true
+          includePreview: ${{ inputs.include-preview }}
 
       - name: Install .NET Tool - Sonar Scanner
         uses: codebeltnet/dotnet-tool-install-sonarscanner@v1
