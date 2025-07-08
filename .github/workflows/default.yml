@@ -31,8 +31,6 @@ on:
         type: string
         default: >-
           -d:sonar.exclusions='**/obj/**,**/bin/**'
-          -d:sonar.sources='src/'
-          -d:sonar.tests='test/'
       timeout-minutes:
         description: The maximum time in minutes to allow the job to run. Default is 15 minutes.
         required: false
@@ -69,6 +67,8 @@ jobs:
           organization: ${{ inputs.organization }}
           projectKey: ${{ inputs.projectKey }}
           version: ${{ inputs.version }}
+          host: ${{ inputs.host }}
+          parameters: ${{ inputs.parameters }}
 
       - name: Build
         uses: codebeltnet/dotnet-build@v4
