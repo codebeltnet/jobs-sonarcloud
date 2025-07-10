@@ -37,6 +37,8 @@ sonarcloud-call:
 
 ```yaml
 with:
+  # Optional path to the project(s) file to build. Pass empty to have MSBuild use the default behavior. Supports globbing. Default is an empty string.
+  projects:
   # The name of your organization in SonarQube Cloud.
   organization:
   # The key of your project in SonarQube Cloud.

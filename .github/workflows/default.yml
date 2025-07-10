@@ -3,6 +3,10 @@ name: SonarQube Cloud
 on:
   workflow_call:
     inputs:
+      projects:
+        description: Optional path to the project(s) file to build. Pass empty to have MSBuild use the default behavior. Supports globbing. Default is an empty string.
+        required: false
+        type: string
       organization:
         description: The name of your organization in SonarQube Cloud.
         required: true
@@ -74,6 +78,7 @@ jobs:
         uses: codebeltnet/dotnet-build@v4
         with:
           build-switches: -p:SkipSignAssembly=true
+          projects: ${{ inputs.projects }}
 
       - name: Finalize SonarCloud Analysis
         uses: codebeltnet/sonarcloud-scan-finalize@v1
