@@ -54,12 +54,12 @@ jobs:
         uses: codebeltnet/git-checkout@v1
 
       - name: Install .NET
-        uses: codebeltnet/install-dotnet@v2
+        uses: codebeltnet/install-dotnet@v3
         with:
           includePreview: ${{ inputs.include-preview }}
 
       - name: Install .NET Tool - Sonar Scanner
-        uses: codebeltnet/dotnet-tool-install-sonarscanner@v2
+        uses: codebeltnet/dotnet-tool-install-sonarscanner@v3
 
       - name: Restore Dependencies
         uses: codebeltnet/dotnet-restore@v3
