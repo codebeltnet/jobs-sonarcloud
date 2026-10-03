@@ -30,7 +30,7 @@ To call this workflow in your GitHub repository, you can follow these steps:
 
 ```yaml
 sonarcloud-call:
-    uses: codebeltnet/jobs-sonarcloud/.github/workflows/default.yml@v1
+    uses: codebeltnet/jobs-sonarcloud/.github/workflows/default.yml@v3
 ```
 
 ### Inputs
@@ -39,6 +39,10 @@ sonarcloud-call:
 with:
   # Optional path to the project(s) file to build. Pass empty to have MSBuild use the default behavior. Supports globbing. Default is an empty string.
   projects:
+  # Optional checkout branch, tag or SHA. Omit to retain the triggering ref.
+  ref: ''
+  # Build configuration. Defaults to Debug for existing callers.
+  configuration: Debug
   # The name of your organization in SonarQube Cloud.
   organization:
   # The key of your project in SonarQube Cloud.
@@ -58,6 +62,8 @@ with:
   timeout-minutes: 15
 ```
 
+For post-release assurance, set `ref` to the exact released SHA and `configuration: Release`. Use the existing `parameters` input to set `-d:sonar.branch.name=main` and `-d:sonar.scm.revision=<released SHA>`, retaining `-d:sonar.exclusions='**/obj/**,**/bin/**'` because custom parameters replace the defaults. Set `version` to the released SemVer. Omitting the new inputs retains the triggering checkout and Debug build used by existing callers.
+
 ### Secrets
 
 ```yaml
@@ -75,7 +81,7 @@ This workflow has no outputs.
 jobs:
   sonarcloud:
     needs: [build,test]
-    uses: codebeltnet/jobs-sonarcloud/.github/workflows/default@v2
+    uses: codebeltnet/jobs-sonarcloud/.github/workflows/default.yml@v3
     with:
       organization: your-sonarcloud-organization
       projectKey: your-sonarcloud-projectkey

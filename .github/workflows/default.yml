@@ -7,6 +7,16 @@ on:
         description: Optional path to the project(s) file to build. Pass empty to have MSBuild use the default behavior. Supports globbing. Default is an empty string.
         required: false
         type: string
+      ref:
+        description: The branch, tag or SHA to check out. Omit to retain the triggering ref.
+        required: false
+        type: string
+        default: ''
+      configuration:
+        description: The build configuration. Defaults to Debug to preserve existing callers.
+        required: false
+        type: string
+        default: Debug
       organization:
         description: The name of your organization in SonarQube Cloud.
         required: true
@@ -51,7 +61,14 @@ jobs:
     timeout-minutes: ${{ inputs.timeout-minutes }}
     steps:
       - name: Checkout
+        if: ${{ inputs.ref == '' }}
         uses: codebeltnet/git-checkout@v1
+
+      - name: Checkout requested ref
+        if: ${{ inputs.ref != '' }}
+        uses: codebeltnet/git-checkout@v1
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Install .NET
         uses: codebeltnet/install-dotnet@v3
@@ -77,6 +94,7 @@ jobs:
       - name: Build
         uses: codebeltnet/dotnet-build@v4
         with:
+          configuration: ${{ inputs.configuration }}
           build-switches: -p:SkipSignAssembly=true
           projects: ${{ inputs.projects }}
 
