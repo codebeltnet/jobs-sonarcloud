@@ -50,6 +50,26 @@ on:
         required: false
         type: number
         default: 15
+      coverage-mode:
+        description: Controls how coverage is supplied to SonarQube Cloud. Allowed values are opencover and normalized.
+        required: false
+        type: string
+        default: opencover
+      coverage-source-root:
+        description: Repository-relative source directory used to normalize workspace paths in normalized mode.
+        required: false
+        type: string
+        default: src
+      coverage-partition-regex:
+        description: Regex over artifact-relative report paths; capture groups identify build variant and target framework in normalized mode. Every report must match.
+        required: false
+        type: string
+        default: '^([^/]+?)(?:-[0-9a-f]{16,})?/([^/]+)/'
+      coverage-max-identity-spread:
+        description: Optional caller acceptance guard for cross-partition branch source-line spread. Empty means no threshold.
+        required: false
+        type: string
+        default: ''
     secrets:
       SONAR_TOKEN:
         required: true
@@ -90,6 +110,10 @@ jobs:
           version: ${{ inputs.version }}
           host: ${{ inputs.host }}
           parameters: ${{ inputs.parameters }}
+          coverage-mode: ${{ inputs.coverage-mode }}
+          coverage-source-root: ${{ inputs.coverage-source-root }}
+          coverage-partition-regex: ${{ inputs.coverage-partition-regex }}
+          coverage-max-identity-spread: ${{ inputs.coverage-max-identity-spread }}
 
       - name: Build
         uses: codebeltnet/dotnet-build@v4

@@ -60,7 +60,23 @@ with:
     -d:sonar.tests='test/'
   # The maximum time in minutes to allow the job to run. Default is 15 minutes.
   timeout-minutes: 15
+  # Coverage representation: opencover (default) or normalized (opt in).
+  coverage-mode: opencover
+  # Repository-relative source directory, used only in normalized mode.
+  coverage-source-root: src
+  # Artifact-relative capture groups identify build variant and target framework.
+  coverage-partition-regex: '^([^/]+?)(?:-[0-9a-f]{16,})?/([^/]+)/'
+  # Optional caller acceptance guard; empty means no maximum source-line spread.
+  coverage-max-identity-spread: ''
 ```
+
+These four optional inputs are forwarded to `sonarcloud-scan@v2`. Defaults preserve existing OpenCover consumers. To opt in, set `coverage-mode: normalized` and `coverage-source-root: src`. The workflow's existing .NET installation supplies the stable .NET 10 SDK required by normalization; the action itself installs no prerequisites.
+
+Both modes download the raw `TestResults*` artifacts once. Normalized mode generates and verifies one Sonar generic coverage report before scanner begin, then retains the existing build and finalization sequence. It configures `sonar.coverageReportPaths` and omits `sonar.cs.opencover.reportsPaths`. The default mode retains the existing OpenCover glob; both retain VSTest report ingestion.
+
+The partition pattern matches paths relative to `artifacts` and groups the build variant and target framework. All reports must match; customize the pattern for other artifact layouts. The spread guard is empty by default and belongs to the caller. Both coverage property names are reserved and rejected in `parameters`, including same-mode overrides. Quoted additional arguments are passed literally without shell evaluation.
+
+The normalizer unions execution evidence and deduplicates logical source structure using the available OpenCover identities. Compiler-divergent methods can make ordinal/path correlation ambiguous; this is deterministic aggregation rather than perfect compiler-independent branch identity. Read the [shared normalizer contract and validation provenance](https://github.com/codebeltnet/sonarcloud-scan/blob/main/docs/coverage-normalization.md) before selecting a caller acceptance guard. Codecov remains a separate raw-evidence consumer.
 
 For post-release assurance, set `ref` to the exact released SHA and `configuration: Release`. Use the existing `parameters` input to set `-d:sonar.branch.name=main` and `-d:sonar.scm.revision=<released SHA>`, retaining `-d:sonar.exclusions='**/obj/**,**/bin/**'` because custom parameters replace the defaults. Set `version` to the released SemVer. Omitting the new inputs retains the triggering checkout and Debug build used by existing callers.
 
